@@ -21,9 +21,11 @@ import shutil
 import subprocess
 import sys
 import time
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
+REPO = "AnthonySmith96/android-limpio"
 AQUI = Path(__file__).resolve().parent
 CONOCIDOS = AQUI.parent / "datos" / "conocidos.json"
 UAD_URL = ("https://raw.githubusercontent.com/Universal-Debloater-Alliance/"
@@ -369,7 +371,9 @@ def cmd_limpiar(a):
                     out = "el fabricante no deja quitarlo; quedó congelado"
         print(f"{'✔' if hecho else '✘'} {n}: {out}")
         if hecho:
-            registrar(eq, {"tipo": hecho, "paquete": n})
+            registrar(eq, {"tipo": hecho, "paquete": n, "pedido": accion})
+        else:
+            registrar(eq, {"tipo": "fallo", "paquete": n, "pedido": accion, "salida": out[:200]})
     if plan and not a.aplicar:
         print("\nNada cambió. Repite con --aplicar para hacerlo.")
 
@@ -455,6 +459,51 @@ def cmd_revisar(a):
     print(f"\nRevisar ya: {len(h['revisar'])} · Fábrica conocido: {len(h['conocidos'])} · "
           f"Sin usar y seguras de quitar: {len(h['sugeridos'])} · No tocar: {len(h['no_tocar'])}")
     print(f"Reporte: {d / 'reporte.md'}")
+
+
+def cmd_aporte(a):
+    """Resumen anónimo de lo aprendido en este equipo, para abrir un issue en el repo.
+
+    Sólo lleva datos del modelo: nada de apps que instaló la persona, número de serie ni cuentas."""
+    eq = Equipo(a.serial)
+    rev = revisar(eq)
+    uad, conocidos = cargar_uad(), cargar_conocidos()
+    e = rev["equipo"]
+    sistema = {n: p for n, p in rev["paquetes"].items() if p["sistema"] and p["instalado"] is not None}
+    instaladores = [(n, uad.get(n, {}).get("removal", "sin clasificar"))
+                    for n, p in sorted(sistema.items())
+                    if {"INSTALL_PACKAGES", "REQUEST_INSTALL_PACKAGES"} & set(p["permisos"])
+                    and not buscar_conocido(n, conocidos)]
+    sin_uad = sorted(n for n in sistema if n not in uad and not buscar_conocido(n, conocidos))
+    log = eq.carpeta() / "acciones.jsonl"
+    acciones = [json.loads(l) for l in log.read_text(encoding="utf-8").splitlines() if l.strip()] if log.exists() else []
+    forzado = sorted({x["paquete"] for x in acciones if x["tipo"] == "congelar" and x.get("pedido") == "quitar"})
+    fallos = sorted({(x["paquete"], x.get("salida", "")) for x in acciones if x["tipo"] == "fallo"})
+    hallados = sorted((n, p["estado"] if p["instalado"] else "quitado") for n, p in rev["paquetes"].items()
+                      if p["instalado"] is not None and buscar_conocido(n, conocidos)
+                      # una app normal marcada «revisar» (p. ej. Meta AI) es elección de la persona: no se reporta
+                      and (p["sistema"] or buscar_conocido(n, conocidos)["accion"] != "revisar"))
+
+    L = [f"## Equipo", "", f"{e['fabricante']} {e['modelo']} · Android {e['android']} · parche {e['parche']}", "",
+         "## Software conocido encontrado", ""]
+    L += [f"- `{n}` ({s})" for n, s in hallados] or ["Ninguno."]
+    L += ["", "## Instaladores de sistema que la lista de conocidos no explica", "",
+          "Apps de sistema con permiso de instalar apps. Pueden ser normales (tiendas, actualizadores) o candidatas a `conocidos.json`.", ""]
+    L += [f"- `{n}` (UAD: {r})" for n, r in instaladores] or ["Ninguno."]
+    L += ["", "## El fabricante no dejó quitarlos (se congelaron)", ""]
+    L += [f"- `{n}`" for n in forzado] or ["Nada."]
+    L += ["", "## Fallaron", ""]
+    L += [f"- `{n}`: {s}" for n, s in fallos] or ["Nada."]
+    L += ["", f"## Paquetes de sistema que UAD no clasifica ({len(sin_uad)})", "",
+          "<details><summary>Lista</summary>", "", *[f"- `{n}`" for n in sin_uad], "", "</details>",
+          "", "## Notas del agente", "",
+          "<!-- Qué tuviste que hacer distinto en esta marca, qué no cubrió el script, qué falta en la skill. -->", ""]
+    f = eq.carpeta() / "aporte.md"
+    f.write_text("\n".join(L), encoding="utf-8")
+    titulo = f"Equipo: {e['fabricante']} {e['modelo']} (Android {e['android']})"
+    print(f"Aporte anónimo: {f}\nMuéstraselo a la persona y, sólo si acepta:\n"
+          f"  gh issue create -R {REPO} --label equipo --title \"{titulo}\" --body-file \"{f}\"\n"
+          f"  o a mano: https://github.com/{REPO}/issues/new?labels=equipo&title=" + urllib.parse.quote(titulo))
 
 
 def cmd_doctor(a):
@@ -586,9 +635,10 @@ def main():
     v.add_argument("paquetes", nargs="*", help="sólo estos (por omisión, todo)")
     v.add_argument("--aplicar", action="store_true")
     s.add_parser("forense", help="AndroidQF + MVT")
+    s.add_parser("aporte", help="resumen anónimo de este equipo para mejorar el repo")
     a = p.parse_args()
     {"doctor": cmd_doctor, "revisar": cmd_revisar, "limpiar": cmd_limpiar, "ajustes": cmd_ajustes,
-     "revertir": cmd_revertir, "forense": cmd_forense}[a.cmd](a)
+     "revertir": cmd_revertir, "forense": cmd_forense, "aporte": cmd_aporte}[a.cmd](a)
 
 
 if __name__ == "__main__":

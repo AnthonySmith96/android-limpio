@@ -22,6 +22,7 @@ La otra mitad es no romper nada: hay apps que parecen basura y no lo son. Quitar
 | `ajustes` | Animaciones más rápidas, DNS que bloquea anuncios, quitar permiso de instalar apps | Sólo con `--aplicar` |
 | `revertir` | Deshace todo lo anterior | Sólo con `--aplicar` |
 | `forense` | Busca spyware conocido con [AndroidQF](https://github.com/mvt-project/androidqf) y [MVT](https://docs.mvt.re/) de Amnesty International | No |
+| `aporte` | Resumen anónimo de tu modelo para mejorar el repo (no incluye tus apps) | No |
 
 ## Empezar
 
@@ -71,9 +72,15 @@ Todo se queda en tu computadora, en `~/android-limpio-resultados/`. Los reportes
 - Sin root no se puede borrar de verdad una app de sistema: se quita para tu usuario y vuelve tras un restablecimiento de fábrica.
 - Una actualización mayor del sistema puede regresar la basura. Vuelve a correr `revisar`.
 - `forense` sólo detecta spyware **conocido**. Si te preocupa un ataque dirigido, busca ayuda: [Amnesty Security Lab](https://securitylab.amnesty.org/get-help/) o [Access Now](https://www.accessnow.org/help/).
-- Probado en Samsung Galaxy S25 Ultra con Android 17. En otras marcas, cuéntanos cómo te fue en un issue.
-
 Cómo funciona por dentro: [PROTOCOLO.md](.agents/skills/android-limpio/referencias/PROTOCOLO.md).
+
+## Contribuir
+
+Cada marca y cada operadora traen basura distinta, y tu agente se adapta al equipo que revisa. Lo que aprenda sirve a los demás:
+
+- Al terminar, el agente te ofrece correr `aporte`: un resumen de tu **modelo** (instaladores de fábrica, apps de operadora que nadie ha clasificado, qué no se dejó quitar) sin tus apps ni datos. Lo revisas y, si quieres, se abre como [issue](https://github.com/AnthonySmith96/android-limpio/issues).
+- ¿Encontraste algo que debería estar en [`conocidos.json`](.agents/skills/android-limpio/datos/conocidos.json)? Manda un PR con una fuente pública.
+- Si te sirvió, deja una ⭐: ayuda a que más gente lo encuentre.
 
 ## Créditos
 
