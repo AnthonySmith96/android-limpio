@@ -66,7 +66,9 @@ def run(cmd, timeout=180):
 def dispositivos():
     _, out = run([adb_bin(), "devices", "-l"], timeout=30)
     res = []
-    for line in out.splitlines()[1:]:
+    for line in out.split("List of devices attached", 1)[-1].splitlines():
+        if line.startswith("*"):  # avisos del daemon de adb al arrancar
+            continue
         parts = line.split()
         if len(parts) >= 2:
             res.append((parts[0], parts[1], " ".join(parts[2:])))
