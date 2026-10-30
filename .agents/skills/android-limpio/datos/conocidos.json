@@ -1,0 +1,77 @@
+{
+ "nota": "Software preinstalado que vale la pena explicar. 'accion': quitar | congelar | revisar | no tocar. Un nombre que termina en * es prefijo. Cada entrada cita una fuente pública; lo que no está probado lo dice.",
+ "paquetes": {
+  "com.facebook.system": {
+   "que_es": "Meta App Installer: instalador de Meta con permisos de sistema",
+   "accion": "quitar",
+   "por_que": "Tiene INSTALL_PACKAGES y DELETE_PACKAGES: puede instalar y borrar apps sin pasar por Play Store. Es una capacidad, no prueba de abuso. Viene por acuerdos con el fabricante",
+   "fuente": "https://forum.f-droid.org/t/disgusting-config-files-preinstalled-on-my-system/34407"
+  },
+  "com.facebook.appmanager": {
+   "que_es": "Meta App Manager: actualiza las apps de Meta desde el sistema",
+   "accion": "quitar",
+   "por_que": "Actualiza apps de Meta por fuera de Play Store. Facebook, Instagram y WhatsApp siguen funcionando sin él",
+   "fuente": "https://www.androidpolice.com/2020/08/05/oneplus-is-poisoning-its-phones-with-facebook-bloatware/"
+  },
+  "com.facebook.services": {
+   "que_es": "Meta Services: servicio de Meta sin icono",
+   "accion": "quitar",
+   "por_que": "Corre en segundo plano y usa datos. Un estudio de Trinity College (2021) vio apps de sistema mandando datos sin opción de apagarlo",
+   "fuente": "https://www.tcd.ie/news_events/articles/study-reveals-scale-of-data-sharing-from-android-mobile-phones/"
+  },
+  "com.facebook.stella": {
+   "que_es": "Meta AI, la app de los lentes Ray-Ban Meta (app normal, no de sistema)",
+   "accion": "revisar",
+   "por_que": "Si no usas los lentes, sobra. Mira el Origen: puede llegar con la migración del equipo anterior",
+   "fuente": "https://play.google.com/store/apps/details?id=com.facebook.stella"
+  },
+  "com.aura.oobe.*": {
+   "que_es": "ironSource Aura (hoy de Unity): ofrece e instala apps patrocinadas al configurar el equipo",
+   "accion": "quitar",
+   "por_que": "Hay reportes de apps instaladas si no desmarcas la casilla en la configuración inicial",
+   "fuente": "https://is.com/aura/app-discovery-tools"
+  },
+  "com.ironsource.appcloud.*": {
+   "que_es": "ironSource AppCloud: instalador de apps patrocinadas de operadora",
+   "accion": "quitar",
+   "por_que": "Instala apps promocionadas por la operadora",
+   "fuente": "https://smhn.info/202603-appcloud-android-bloatware"
+  },
+  "com.dti.*": {
+   "que_es": "Digital Turbine Ignite: plataforma con la que operadoras instalan apps",
+   "accion": "quitar",
+   "por_que": "Desde 2014 hay reportes de apps instaladas sin pedir permiso. El sufijo varía por operadora o fabricante",
+   "fuente": "https://www.androidcentral.com/everything-you-need-know-about-dt-ignite"
+  },
+  "com.applovin.array.*": {
+   "que_es": "AppLovin Array: instalador de apps preinstalado por operadoras y fabricantes",
+   "accion": "quitar",
+   "por_que": "En 2025 lo acusaron de instalar apps en silencio; AppLovin cerró Array. Son acusaciones, no pruebas",
+   "fuente": "https://www.shopifreaks.com/applovin-shuts-down-its-controversial-array-product/"
+  },
+  "com.telcel.contenedor": {
+   "que_es": "Contenedor de apps de Telcel",
+   "accion": "quitar",
+   "por_que": "App de operadora que promociona e instala apps. Sin documentación pública",
+   "fuente": "https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation"
+  },
+  "com.samsung.android.rubin.app": {
+   "que_es": "Samsung Customization Service: aprende cómo usas el equipo para personalizar contenido",
+   "accion": "congelar",
+   "por_que": "Guarda historial de uso de apps. Samsung no deja quitarlo sin root; se congela. También se apaga en Ajustes → Privacidad",
+   "fuente": "https://cellebrite.com/en/samsung-rubin-digital-forensics-value-what-you-need-to-know/"
+  },
+  "com.samsung.android.samsungpass": {
+   "que_es": "Samsung Pass: gestor de contraseñas de Samsung",
+   "accion": "revisar",
+   "por_que": "Si guardas contraseñas en otro lado, sobra. Antes de congelarlo, cambia el autollenado en Ajustes → Administración general → Contraseñas y autollenado",
+   "fuente": "https://www.samsung.com/global/galaxy/apps/samsung-pass/"
+  },
+  "com.samsung.android.kgclient": {
+   "que_es": "Knox Guard (Device Services): cliente con el que operadoras y financieras bloquean un equipo a distancia",
+   "accion": "no tocar",
+   "por_que": "Según UAD (lo marca Unsafe), quitarlo bloquea el equipo con un aviso que sólo se quita borrándolo de fábrica. Sólo bloquea a propósito si alguien registró el equipo en la consola de Knox Guard",
+   "fuente": "https://docs.samsungknox.com/admin/knox-guard/"
+  }
+ }
+}
